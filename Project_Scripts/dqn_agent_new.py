@@ -81,19 +81,19 @@ def huber_loss(targets, predictions, delta=1.0):
 
 def mse_loss(targets, predictions):
   #(q_value - (expected_q_value.data)).pow(2).mean()
-  return jnp.mean((targets - (predictions)).pow(2))
+  return jnp.mean(jnp.power((targets - (predictions)),2))
 
 
 @functools.partial(jax.jit, static_argnums=(7,8,9))
 def train(target_network, optimizer, states, actions, next_states, rewards,
-          terminals, cumulative_gamma,double_dqn, mse_loss):
+          terminals, cumulative_gamma,double_dqn, mse_inf):
   """Run the training step."""
-  def loss_fn(model, target, mse_loss):
+  def loss_fn(model, target, mse_inf):
     q_values = jax.vmap(model, in_axes=(0))(states).q_values
     q_values = jnp.squeeze(q_values)
     replay_chosen_q = jax.vmap(lambda x, y: x[y])(q_values, actions)
 
-    if mse_loss:
+    if mse_inf:
       print('mse_loss')
       loss = jnp.mean(jax.vmap(mse_loss)(target, replay_chosen_q))
     else:
@@ -111,7 +111,7 @@ def train(target_network, optimizer, states, actions, next_states, rewards,
 
   #optimizer.target ('Online')
   # target ('Target')
-  loss, grad = grad_fn(optimizer.target, target, huber_loss)
+  loss, grad = grad_fn(optimizer.target, target, mse_inf)
   optimizer = optimizer.apply_gradient(grad)
   return optimizer, loss
 
@@ -223,7 +223,7 @@ class JaxDQNAgent(object):
                stack_size=NATURE_DQN_STACK_SIZE,
                network=None,
                double_dqn=False,
-               mse_loss=False,
+               mse_inf=False,
                gamma=0.99,
                update_horizon=1,
                min_replay_history=20000,
@@ -297,7 +297,7 @@ class JaxDQNAgent(object):
     self.stack_size = stack_size
     self.network = network.partial(num_actions=num_actions)
     self.double_dqn = double_dqn
-    self.mse_loss = mse_loss
+    self.mse_inf = mse_inf
     self.gamma = gamma
     self.update_horizon = update_horizon
     self.cumulative_gamma = math.pow(gamma, update_horizon)
@@ -492,7 +492,7 @@ class JaxDQNAgent(object):
                                      self.replay_elements['terminal'],
                                      self.cumulative_gamma,
                                      self.double_dqn,
-                                     self.mse_loss)
+                                     self.mse_inf)
         if (self.summary_writer is not None and
             self.training_steps > 0 and
             self.training_steps % self.summary_writing_frequency == 0):
