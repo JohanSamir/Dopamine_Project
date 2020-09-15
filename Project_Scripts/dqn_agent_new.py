@@ -84,15 +84,20 @@ def mse_loss(targets, predictions):
   return jnp.mean((targets - (predictions)).pow(2))
 
 
-@functools.partial(jax.jit, static_argnums=(7,8))
+@functools.partial(jax.jit, static_argnums=(7,8,9))
 def train(target_network, optimizer, states, actions, next_states, rewards,
-          terminals, cumulative_gamma,double_dqn):
+          terminals, cumulative_gamma,double_dqn, mse_loss):
   """Run the training step."""
-  def loss_fn(model, target):
+  def loss_fn(model, target, mse_loss):
     q_values = jax.vmap(model, in_axes=(0))(states).q_values
     q_values = jnp.squeeze(q_values)
     replay_chosen_q = jax.vmap(lambda x, y: x[y])(q_values, actions)
-    loss = jnp.mean(jax.vmap(huber_loss)(target, replay_chosen_q))
+
+    if mse_loss:
+      print('mse_loss')
+      loss = jnp.mean(jax.vmap(mse_loss)(target, replay_chosen_q))
+    else:
+      loss = jnp.mean(jax.vmap(huber_loss)(target, replay_chosen_q))
     return loss
 
 
@@ -106,7 +111,7 @@ def train(target_network, optimizer, states, actions, next_states, rewards,
 
   #optimizer.target ('Online')
   # target ('Target')
-  loss, grad = grad_fn(optimizer.target, target)
+  loss, grad = grad_fn(optimizer.target, target, huber_loss)
   optimizer = optimizer.apply_gradient(grad)
   return optimizer, loss
 
@@ -216,8 +221,9 @@ class JaxDQNAgent(object):
                observation_shape=NATURE_DQN_OBSERVATION_SHAPE,
                observation_dtype=NATURE_DQN_DTYPE,
                stack_size=NATURE_DQN_STACK_SIZE,
-               network=NatureDQNNetwork,
+               network=None,
                double_dqn=False,
+               mse_loss=False,
                gamma=0.99,
                update_horizon=1,
                min_replay_history=20000,
@@ -291,6 +297,7 @@ class JaxDQNAgent(object):
     self.stack_size = stack_size
     self.network = network.partial(num_actions=num_actions)
     self.double_dqn = double_dqn
+    self.mse_loss = mse_loss
     self.gamma = gamma
     self.update_horizon = update_horizon
     self.cumulative_gamma = math.pow(gamma, update_horizon)
@@ -484,7 +491,8 @@ class JaxDQNAgent(object):
                                      self.replay_elements['reward'],
                                      self.replay_elements['terminal'],
                                      self.cumulative_gamma,
-                                     self.double_dqn)
+                                     self.double_dqn,
+                                     self.mse_loss)
         if (self.summary_writer is not None and
             self.training_steps > 0 and
             self.training_steps % self.summary_writing_frequency == 0):
