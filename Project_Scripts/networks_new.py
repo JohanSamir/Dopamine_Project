@@ -28,6 +28,28 @@ gin.constant('jax_networks.ACROBOT_OBSERVATION_DTYPE', jnp.float64)
 
 
 @gin.configurable
+class CartpoleDQNNetwork(nn.Module):
+  """Jax DQN network for Cartpole."""
+
+  def apply(self, x, num_actions):
+    initializer = nn.initializers.xavier_uniform()
+    # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
+    # have removed the true batch dimension.
+    x = x[None, ...]
+    x = x.astype(jnp.float32)
+    x = x.reshape((x.shape[0], -1))  # flatten
+    x -= gym_lib.CARTPOLE_MIN_VALS
+    x /= gym_lib.CARTPOLE_MAX_VALS - gym_lib.CARTPOLE_MIN_VALS
+    x = 2.0 * x - 1.0  # Rescale in range [-1, 1].
+    x = nn.Dense(x, features=512, kernel_init=initializer)
+    x = jax.nn.relu(x)
+    x = nn.Dense(x, features=512, kernel_init=initializer)
+    x = jax.nn.relu(x)
+    q_values = nn.Dense(x, features=num_actions, kernel_init=initializer)
+    return atari_lib.DQNNetworkType(q_values)
+
+
+@gin.configurable
 class CartpoleDuelingDQNNetwork(nn.Module):
   """Jax DQN network for Cartpole."""
   
