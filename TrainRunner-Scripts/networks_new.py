@@ -108,3 +108,37 @@ class LunarLanderDQNNetwork(nn.Module):
     x = jax.nn.relu(x)
     q_values = nn.Dense(x, features=num_actions, kernel_init=initializer)
     return atari_lib.DQNNetworkType(q_values)
+
+
+@gin.configurable
+class CartpoleRainbowDuelingNetwork(nn.Module):
+  """Jax Rainbow network for Cartpole."""
+  print('Dueling-Rainbow')
+  def apply(self, x, num_actions, num_atoms, support):
+    initializer = nn.initializers.xavier_uniform()
+    # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
+    # have removed the true batch dimension.
+    x = x[None, ...]
+    x = x.astype(jnp.float32)
+    x = x.reshape((x.shape[0], -1))  # flatten
+    x -= gym_lib.CARTPOLE_MIN_VALS
+    x /= gym_lib.CARTPOLE_MAX_VALS - gym_lib.CARTPOLE_MIN_VALS
+    x = 2.0 * x - 1.0  # Rescale in range [-1, 1].
+    x = nn.Dense(x, features=512, kernel_init=initializer)
+    x = jax.nn.relu(x)
+    x = nn.Dense(x, features=512, kernel_init=initializer)
+    x = jax.nn.relu(x)
+
+    adv = nn.Dense(x, features=num_actions * num_atoms, kernel_init=initializer)
+    value = nn.Dense(x, features= num_atoms, kernel_init=initializer)
+    
+    adv = adv.reshape((adv.shape[0], num_actions, num_atoms))
+    value = value.reshape((value.shape[0], 1, num_atoms))
+
+    q_atoms = value + (adv - (jnp.mean(adv, -1, keepdims=True)))
+
+    #probabilities = nn.softmax(logits)
+    probabilities = nn.softmax(q_atoms)
+    q_values = jnp.sum(support * probabilities, axis=2)
+
+    return atari_lib.RainbowNetworkType(q_values, q_atoms, probabilities)
