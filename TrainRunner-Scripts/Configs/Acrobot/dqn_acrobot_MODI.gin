@@ -1,0 +1,40 @@
+# Hyperparameters for a simple DQN-style Acrobot agent. The hyperparameters
+# chosen achieve reasonable performance.
+import dopamine.discrete_domains.gym_lib
+import dopamine.discrete_domains.run_experiment
+import dopamine.jax.agents.dqn.dqn_agent
+import dqn_agent_new
+import dopamine.jax.networks
+import networks_new
+import dopamine.replay_memory.circular_replay_buffer
+import flax
+
+JaxxDQNAgent.observation_shape = %gym_lib.ACROBOT_OBSERVATION_SHAPE
+JaxxDQNAgent.observation_dtype = %jax_networks.ACROBOT_OBSERVATION_DTYPE
+JaxxDQNAgent.stack_size = %gym_lib.ACROBOT_STACK_SIZE
+JaxxDQNAgent.network = @networks_new.AcrabotDuelingDQNNetwork #@networks.AcrobotDQNNetwork
+JaxxDQNAgent.gamma = 0.99
+JaxxDQNAgent.update_horizon = 1
+JaxxDQNAgent.min_replay_history = 500
+JaxxDQNAgent.update_period = 4
+JaxxDQNAgent.target_update_period = 100
+JaxxDQNAgent.double_dqn = True
+JaxxDQNAgent.mse_inf = False
+
+
+JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
+JaxxDQNAgent.optimizer = 'adam'
+ccreate_optimizer.learning_rate = 0.001
+ccreate_optimizer.eps = 3.125e-4
+
+create_gym_environment.environment_name = 'Acrobot'
+create_gym_environment.version = 'v1'
+#create_agent.debug_mode = True
+TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
+Runner.num_iterations = 30
+Runner.training_steps = 1000
+#Runner.evaluation_steps = 1000
+Runner.max_steps_per_episode = 500
+
+OutOfGraphReplayBuffer.replay_capacity = 50000
+OutOfGraphReplayBuffer.batch_size = 128
