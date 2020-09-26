@@ -8,41 +8,39 @@ import dopamine.replay_memory.circular_replay_buffer
 import flax
 
 
-#JaxxDQNAgent.num_actions = 2
-#JaxxDQNAgent.observation_shape = (4, 1)
+#JaxxDQNAgent.observation_shape = (8,1)
+#JaxxDQNAgent.observation_dtype = %jax_networks.LUNALANDER_OBSERVATION_DTYPE
 #JaxxDQNAgent.stack_size = 1
-JaxxDQNAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
-JaxxDQNAgent.observation_dtype = %jax_networks.CARTPOLE_OBSERVATION_DTYPE
-JaxxDQNAgent.stack_size = %gym_lib.CARTPOLE_STACK_SIZE
+JaxxDQNAgent.network = @networks_new.FreewayDDQNNetwork #[OK]
 
-JaxxDQNAgent.network = @networks_new.CartpoleNoisyDQNNetwork
-#JaxxDQNAgent.network = @networks_new.CartpoleDuelingDQNNetwork #[OK]
-#JaxxDQNAgent.network = @networks.CartpoleDQNNetwork  #[OK]
 
 JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
-JaxxDQNAgent.min_replay_history = 500
+JaxxDQNAgent.min_replay_history = 1000
 JaxxDQNAgent.update_period = 4
-JaxxDQNAgent.target_update_period = 100
+JaxxDQNAgent.target_update_period = 1000
+
 JaxxDQNAgent.double_dqn = True
-JaxxDQNAgent.mse_inf = False #Mean Square Error Loss function
+JaxxDQNAgent.mse_inf = True #Mean Square Error Loss function
+JaxxDQNAgent.noisy = False
+JaxxDQNAgent.dueling = False
 #JaxxDQNAgent.summary_writer = None
 
 #JaxxDQNAgent.epsilon_fn = @dqn_agent_new.linearly_decaying_epsilon #@functools.partial(jax.jit) it's not @gin.configurable
 JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
 
 JaxxDQNAgent.optimizer = 'adam'
-ccreate_optimizer.learning_rate = 0.001
+ccreate_optimizer.learning_rate = 0.001 #0.0001
 ccreate_optimizer.eps = 3.125e-4
 
-create_gym_environment.environment_name = 'CartPole'
-create_gym_environment.version = 'v0'
+#create_gym_environment.environment_name = 'LunarLander'
+#create_gym_environment.version = 'v2'
 
 TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
 Runner.num_iterations = 30
 Runner.training_steps = 1000
 #Runner.evaluation_steps = 1000
-Runner.max_steps_per_episode = 200  # Default max episode length.
+Runner.max_steps_per_episode = 10000
 
 OutOfGraphReplayBuffer.replay_capacity = 50000
 OutOfGraphReplayBuffer.batch_size = 128

@@ -14,14 +14,15 @@ import networks_new
 JaxxRainbowAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
 JaxxRainbowAgent.observation_dtype = %jax_networks.CARTPOLE_OBSERVATION_DTYPE
 JaxxRainbowAgent.stack_size = %gym_lib.CARTPOLE_STACK_SIZE
-JaxxRainbowAgent.network  = @networks_new.CartpoleRainbowFull #@networks.CartpoleRainbowNetwork
+JaxxRainbowAgent.network  = @networks_new.CartpoleRainbowFull 
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 200. #->Original 10
 JaxxRainbowAgent.gamma = 0.99
-JaxxRainbowAgent.double_dqn = True
 
-# Original =3
-#JaxxRainbowAgent.update_horizon = 1
+JaxxRainbowAgent.double_dqn = True
+JaxxRainbowAgent.noisy = True
+JaxxRainbowAgent.dueling = True
+
 JaxxRainbowAgent.update_horizon = 3 # Rainbow
 JaxxRainbowAgent.min_replay_history = 500
 JaxxRainbowAgent.update_period = 2 #-> 4 # EStaba en 2

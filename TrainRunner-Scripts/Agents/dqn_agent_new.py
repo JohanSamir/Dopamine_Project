@@ -24,11 +24,6 @@ import math
 
 from absl import logging
 
-#from dopamine.agents.dqn import dqn_agent
-#from dopamine.jax import networks
-from networks_new import *
-from dqn_agent_new import *
-
 
 from dopamine.replay_memory import circular_replay_buffer
 from flax import nn
@@ -39,10 +34,6 @@ import jax.numpy as jnp
 import numpy as onp
 import tensorflow as tf
 
-
-#NATURE_DQN_OBSERVATION_SHAPE = dqn_agent.NATURE_DQN_OBSERVATION_SHAPE
-#NATURE_DQN_DTYPE = jnp.uint8
-#NATURE_DQN_STACK_SIZE = dqn_agent.NATURE_DQN_STACK_SIZE
 
 
 @gin.configurable
@@ -219,8 +210,9 @@ class JaxxDQNAgent(object):
   """A JAX implementation of the DQN agent."""
 
   def __init__(self,
-               sess,
                num_actions,
+               noisy = False,
+               dueling = False,
                #observation_shape=NATURE_DQN_OBSERVATION_SHAPE,
                #observation_dtype=NATURE_DQN_DTYPE,
                #stack_size=NATURE_DQN_STACK_SIZE,
@@ -302,11 +294,12 @@ class JaxxDQNAgent(object):
                  max_tf_checkpoints_to_keep)
 
     self.num_actions = num_actions
-    self._sess = sess
+    self.noisy = noisy
+    self.dueling = dueling
     self.observation_shape = tuple(observation_shape)
     self.observation_dtype = observation_dtype
     self.stack_size = stack_size
-    self.network = network.partial(num_actions=num_actions)
+    self.network = network.partial(num_actions=num_actions,noisy=noisy,dueling=dueling)
     self.double_dqn = double_dqn
     self.mse_inf = mse_inf
     self.gamma = gamma

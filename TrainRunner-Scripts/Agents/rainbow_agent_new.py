@@ -38,9 +38,6 @@ from __future__ import division
 from __future__ import print_function
 
 import functools
-
-
-
 from dopamine.jax import networks
 from dopamine.jax.agents.dqn import dqn_agent
 from dopamine.replay_memory import prioritized_replay_buffer
@@ -97,20 +94,10 @@ def target_distributionDouble(model, target_network, next_states, rewards, termi
   next_state_target_outputs = model(next_states)
   q_values = jnp.squeeze(next_state_target_outputs.q_values) 
   next_qt_argmax = jnp.argmax(q_values)
-  #logits = jax.vmap(model)(next_states).q_values
-  #q_values = jnp.squeeze(logits)
-  #next_qt_argmax = jnp.argmax(q_values)
 
   next_dist = target_network(next_states)
   probabilities = jnp.squeeze(next_dist.probabilities) 
   next_probabilities = probabilities[next_qt_argmax]
-
-  #next_state_target_outputs = target_network(next_states)
-  #q_values = jnp.squeeze(next_state_target_outputs.q_values) 
-  #next_qt_argmax = jnp.argmax(q_values)
-
-  #probabilities = jnp.squeeze(next_state_target_outputs.probabilities)
-  #next_probabilities = probabilities[next_qt_argmax]
 
   return jax.lax.stop_gradient(project_distribution(target_support, next_probabilities, support))
 
@@ -138,6 +125,8 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
 
   def __init__(self,
                num_actions,
+               noisy = False,
+               dueling = False,
                observation_shape=dqn_agent.NATURE_DQN_OBSERVATION_SHAPE,
                observation_dtype=dqn_agent.NATURE_DQN_DTYPE,
                stack_size=dqn_agent.NATURE_DQN_STACK_SIZE,
@@ -202,6 +191,8 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
     self._support = jnp.linspace(-vmax, vmax, num_atoms)
     self._replay_scheme = replay_scheme
     self._double_dqn = double_dqn
+    self._noisy = noisy
+    self._dueling = dueling
 
     super(JaxxRainbowAgent, self).__init__(
         num_actions=num_actions,
@@ -237,7 +228,9 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
                                           x=self.state,
                                           num_actions=self.num_actions,
                                           num_atoms=self._num_atoms,
-                                          support=self._support)
+                                          support=self._support,
+                                          noisy=self._noisy,
+                                          dueling=self._dueling)
     return nn.Model(self.network, initial_params)
 
   def _build_replay_buffer(self):
