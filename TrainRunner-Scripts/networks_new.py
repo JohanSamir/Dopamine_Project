@@ -25,6 +25,7 @@ from jax import random
 
 
 gin.constant('jax_networks.LUNALANDER_OBSERVATION_DTYPE', jnp.float64)
+gin.constant('jax_networks.MOUNTAINCAR_OBSERVATION_DTYPE', jnp.float64)
 
 #---------------------------------------------------------------------------------------------------------------------
 
@@ -160,6 +161,109 @@ class CartpoleRainbowFull(nn.Module):
     
     return atari_lib.RainbowNetworkType(q_values, logits, probabilities)
 
+#---------------------------------------------< MountainCar >----------------------------------------------------------
+
+
+@gin.configurable
+class MountainCarDDQNNetwork(nn.Module):
+  """Jax DQN network for Cartpole."""
+
+  def apply(self, x, num_actions, noisy, dueling):
+    print('MountainCarD-DQNNetwork')
+    # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
+    # have removed the true batch dimension.
+
+    print('num_actions',num_actions)
+
+    MOUNTAINCAR_MIN_VALS = onp.array([-1.2, -0.07])
+    MOUNTAINCAR_MAX_VALS = onp.array([0.6, 0.07])
+
+
+    x = x[None, ...]
+    x = x.astype(jnp.float32)
+    x = x.reshape((x.shape[0], -1))  # flatten
+    x -= MOUNTAINCAR_MIN_VALS
+    x /= MOUNTAINCAR_MAX_VALS - MOUNTAINCAR_MIN_VALS
+    x = 2.0 * x - 1.0  # Rescale in range [-1, 1].
+    
+    if noisy:
+        print('MountainCarDDQNNetwork-Noisy[Johan]')
+        initializer = None
+        bias = True
+        def net(x, features, bias, kernel_init):
+            return NoisyNetwork(x, features, bias, kernel_init)
+    else:
+        print('MountainCarDDQNNetwork-NO-Noisy')
+        initializer = nn.initializers.xavier_uniform()
+        bias = None
+        def net(x, features, bias, kernel_init):
+            return nn.Dense(x, features, kernel_init)      
+
+    x = net(x, features=512, bias=bias, kernel_init=initializer)
+    x = jax.nn.relu(x)
+    x = net(x, features=512, bias=bias, kernel_init=initializer)  
+    x = jax.nn.relu(x)
+
+    if dueling:
+        print('MountainCarDDQNNNetwork-Dueling[Johan]')
+        adv = net(x, features=num_actions, bias=bias, kernel_init=initializer)
+        val = net(x, features=1, bias=bias, kernel_init=initializer)
+        q_values = val + (adv - (jnp.mean(adv, -1, keepdims=True)))
+
+    else:
+        q_values = net(x, features=num_actions, bias=bias, kernel_init=initializer)
+
+    return atari_lib.DQNNetworkType(q_values)
+
+
+@gin.configurable
+class MountainCarRainbowFull(nn.Module):
+  """Jax Rainbow network for Cartpole."""
+  def apply(self, x, num_actions, num_atoms, support, noisy, dueling):
+    # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
+    # have removed the true batch dimension.
+    x = x[None, ...]
+    x = x.astype(jnp.float32)
+    x = x.reshape((x.shape[0], -1))  # flatten
+    #x -= gym_lib.CARTPOLE_MIN_VALS
+    #x /= gym_lib.CARTPOLE_MAX_VALS - gym_lib.CARTPOLE_MIN_VALS
+    #x = 2.0 * x - 1.0  # Rescale in range [-1, 1].
+
+    if noisy:
+        print('MountainCarRainbowFull-Noisy')
+        initializer = None
+        bias = True
+        def net(x, features, bias, kernel_init):
+            return NoisyNetwork(x, features, bias, kernel_init)
+    else:
+        initializer = nn.initializers.xavier_uniform()
+        bias = None
+        def net(x, features, bias, kernel_init):
+            return nn.Dense(x, features, kernel_init) 
+
+    x = net(x, features=512, bias=bias, kernel_init=initializer)
+    x = jax.nn.relu(x)
+    x = net(x,features=512, bias=bias, kernel_init=initializer)
+    x = jax.nn.relu(x)
+
+    if dueling:
+        print('MountainCarRainbowFull-Dueling')
+        adv = net(x,features=num_actions * num_atoms, bias=bias, kernel_init=initializer)
+        value = net(x, features=num_atoms, bias=bias, kernel_init=initializer)
+        adv = adv.reshape((adv.shape[0], num_actions, num_atoms))
+        value = value.reshape((value.shape[0], 1, num_atoms))
+        logits = value + (adv - (jnp.mean(adv, -1, keepdims=True)))
+        probabilities = nn.softmax(logits)
+        q_values = jnp.sum(support * probabilities, axis=2)
+
+    else:
+        x = net(x, features=num_actions * num_atoms, bias=bias, kernel_init=initializer)
+        logits = x.reshape((x.shape[0], num_actions, num_atoms))
+        probabilities = nn.softmax(logits)
+        q_values = jnp.sum(support * probabilities, axis=2)
+    
+    return atari_lib.RainbowNetworkType(q_values, logits, probabilities)
+
 #---------------------------------------------< LunarLander >----------------------------------------------------------
 
 @gin.configurable
@@ -211,6 +315,7 @@ class LunarLanderRainbowFull(nn.Module):
   def apply(self, x, num_actions, num_atoms, support, noisy, dueling):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
+
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = x.reshape((x.shape[0], -1))  # flatten
