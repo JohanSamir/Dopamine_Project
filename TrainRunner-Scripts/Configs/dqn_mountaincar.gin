@@ -21,7 +21,7 @@ JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 100
 
 JaxxDQNAgent.double_dqn = False
-JaxxDQNAgent.mse_inf = True #Mean Square Error Loss function
+JaxxDQNAgent.mse_inf = True #Mean Square Error Loss function 
 JaxxDQNAgent.noisy = False
 JaxxDQNAgent.dueling = False
 
@@ -41,7 +41,7 @@ TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
 Runner.num_iterations = 30
 Runner.training_steps = 1000
 #Runner.evaluation_steps = 1000
-Runner.max_steps_per_episode = 600#it should be greather than 300 # Default max episode length.
+Runner.max_steps_per_episode = 200 #600#it should be greather than 300 # Default max episode length.
 
 OutOfGraphReplayBuffer.replay_capacity = 50000#500000
 OutOfGraphReplayBuffer.batch_size = 128

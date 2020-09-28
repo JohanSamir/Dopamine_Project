@@ -200,7 +200,9 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
         observation_dtype=observation_dtype,
         stack_size=stack_size,
         network=network.partial(num_atoms=num_atoms,
-                                support=self._support),
+                                support=self._support, 
+                                noisy=self._noisy,
+                                dueling=self._dueling),
         gamma=gamma,
         update_horizon=update_horizon,
         min_replay_history=min_replay_history,
@@ -228,9 +230,7 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
                                           x=self.state,
                                           num_actions=self.num_actions,
                                           num_atoms=self._num_atoms,
-                                          support=self._support,
-                                          noisy=self._noisy,
-                                          dueling=self._dueling)
+                                          support=self._support)
     return nn.Model(self.network, initial_params)
 
   def _build_replay_buffer(self):
