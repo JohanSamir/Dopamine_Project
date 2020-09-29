@@ -34,7 +34,7 @@ JaxxDQNAgent.optimizer = 'adam'
 ccreate_optimizer.learning_rate = 0.00025 #0.001
 ccreate_optimizer.eps = 3.125e-4
 
-create_gym_environment.environment_name = 'freeway'
+create_minatar_env.game_name  = 'freeway'
 TrainRunner.create_environment_fn = @minatar_env.create_minatar_env
 Runner.num_iterations = 10
 #Runner.training_steps = 1000

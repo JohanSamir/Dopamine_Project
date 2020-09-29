@@ -37,7 +37,7 @@ create_optimizer.learning_rate = 0.0001
 #create_optimizer.learning_rate = 0.09 #Original
 
 create_optimizer.eps = 0.0003125
-create_gym_environment.environment_name = 'breakout'
+create_minatar_env.game_name  = 'breakout'
 TrainRunner.create_environment_fn = @minatar_env.create_minatar_env
 
 

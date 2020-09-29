@@ -31,7 +31,7 @@ JaxxDQNAgent.optimizer = 'adam'
 ccreate_optimizer.learning_rate = 0.00025 #0.001
 ccreate_optimizer.eps = 3.125e-4
 
-create_gym_environment.environment_name = 'space_invaders'
+create_minatar_env.game_name  = 'space_invaders'
 TrainRunner.create_environment_fn = @minatar_env.create_minatar_env
 Runner.num_iterations = 10
 
