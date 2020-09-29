@@ -466,6 +466,7 @@ class SeaquestDDQNNetwork(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -503,6 +504,7 @@ class SeaquestRainbowFull(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -540,7 +542,7 @@ class SeaquestRainbowFull(nn.Module):
     return atari_lib.RainbowNetworkType(q_values, logits, probabilities)  
 
 #-----------------------------------------------< Minatar Breakout  >-----------------------------------------------------------
-
+@gin.configurable
 class BreakoutDDQNNetwork(nn.Module):
   """Jax DQN network for Cartpole."""
 
@@ -548,8 +550,12 @@ class BreakoutDDQNNetwork(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    #print('x.shape',x.shape)
+    x = x.squeeze(3)
+    #print('x.shape',x.shape)
     x = x[None, ...]
     x = x.astype(jnp.float32)
+    #print('x.shape',x.shape)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
     x = jax.nn.relu(x)
     x = x.reshape((x.shape[0], -1))  # flatten
@@ -561,7 +567,8 @@ class BreakoutDDQNNetwork(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)      
@@ -585,6 +592,7 @@ class BreakoutRainbowFull(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -622,7 +630,7 @@ class BreakoutRainbowFull(nn.Module):
     return atari_lib.RainbowNetworkType(q_values, logits, probabilities)  
 
 #-----------------------------------------------< Minatar Asterix   >------------------------------------------------------------
-
+@gin.configurable
 class AsterixDDQNNetwork(nn.Module):
   """Jax DQN network for Cartpole."""
 
@@ -630,6 +638,7 @@ class AsterixDDQNNetwork(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -667,6 +676,7 @@ class AsterixRainbowFull(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -704,6 +714,7 @@ class AsterixRainbowFull(nn.Module):
     return atari_lib.RainbowNetworkType(q_values, logits, probabilities)  
 
 #-----------------------------------------------< Minatar Freeway   >-----------------------------------------------------------
+@gin.configurable
 class FreewayDDQNNetwork(nn.Module):
   """Jax DQN network for Cartpole."""
 
@@ -711,6 +722,7 @@ class FreewayDDQNNetwork(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -748,6 +760,7 @@ class FreewayRainbowFull(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -785,6 +798,7 @@ class FreewayRainbowFull(nn.Module):
     return atari_lib.RainbowNetworkType(q_values, logits, probabilities)  
 
 #-----------------------------------------------< Minatar Space Invaders  >-----------------------------------------------------
+@gin.configurable
 class InvadersDDQNNetwork(nn.Module):
   """Jax DQN network for Cartpole."""
 
@@ -792,6 +806,7 @@ class InvadersDDQNNetwork(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -829,6 +844,7 @@ class InvadersRainbowFull(nn.Module):
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     initializer_conv = nn.initializers.xavier_uniform()
+    x = x.squeeze(3)
     x = x[None, ...]
     x = x.astype(jnp.float32)
     x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=initializer_conv)
@@ -863,8 +879,4 @@ class InvadersRainbowFull(nn.Module):
         probabilities = nn.softmax(logits)
         q_values = jnp.sum(support * probabilities, axis=2)
     
-    return atari_lib.RainbowNetworkType(q_values, logits, probabilities)  
-
-
-
-
+    return atari_lib.RainbowNetworkType(q_values, logits, probabilities)

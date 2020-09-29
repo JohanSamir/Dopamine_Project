@@ -6,12 +6,11 @@ import dopamine.jax.networks
 import networks_new
 import dopamine.replay_memory.circular_replay_buffer
 import flax
+import minatar_env
 
-
-#JaxxDQNAgent.observation_shape = (8,1)
-#JaxxDQNAgent.observation_dtype = %jax_networks.LUNALANDER_OBSERVATION_DTYPE
-#JaxxDQNAgent.stack_size = 1
-
+JaxxDQNAgent.observation_shape = %minatar_env.ASTERIX_SHAPE
+JaxxDQNAgent.observation_dtype = %minatar_env.DTYPE 
+JaxxDQNAgent.stack_size = 1 # Setting it as 4 does not work well.
 JaxxDQNAgent.network = @networks_new.AsterixDDQNNetwork #[OK]
 
 
@@ -21,8 +20,8 @@ JaxxDQNAgent.min_replay_history = 1000
 JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 1000
 
-JaxxDQNAgent.double_dqn = True
-JaxxDQNAgent.mse_inf = True #Mean Square Error Loss function
+JaxxDQNAgent.double_dqn = False
+JaxxDQNAgent.mse_inf = False #Mean Square Error Loss function
 JaxxDQNAgent.noisy = False
 JaxxDQNAgent.dueling = False
 #JaxxDQNAgent.summary_writer = None
@@ -31,17 +30,14 @@ JaxxDQNAgent.dueling = False
 JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
 
 JaxxDQNAgent.optimizer = 'adam'
-ccreate_optimizer.learning_rate = 0.001 #0.0001
+ccreate_optimizer.learning_rate = 0.00025 #0.0001
 ccreate_optimizer.eps = 3.125e-4
 
-#create_gym_environment.environment_name = 'LunarLander'
-#create_gym_environment.version = 'v2'
-
-TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
-Runner.num_iterations = 30
-Runner.training_steps = 1000
+create_gym_environment.environment_name = 'asterix'
+TrainRunner.create_environment_fn =  @minatar_env.create_minatar_env
+Runner.num_iterations = 10
+#Runner.training_steps = 1000
 #Runner.evaluation_steps = 1000
-
-Runner.max_steps_per_episode = 10000 
-OutOfGraphReplayBuffer.replay_capacity = 50000
-OutOfGraphReplayBuffer.batch_size = 128
+#Runner.max_steps_per_episode = 10000 
+OutOfGraphReplayBuffer.replay_capacity = 100000
+OutOfGraphReplayBuffer.batch_size = 32

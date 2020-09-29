@@ -23,8 +23,7 @@ import functools
 import math
 
 from absl import logging
-
-
+#from dopamine.jax import networks
 from dopamine.replay_memory import circular_replay_buffer
 from flax import nn
 from flax import optim
@@ -34,7 +33,12 @@ import jax.numpy as jnp
 import numpy as onp
 import tensorflow as tf
 
+from dopamine.agents.dqn import dqn_agent
+from dopamine.jax import networks
 
+NATURE_DQN_OBSERVATION_SHAPE = dqn_agent.NATURE_DQN_OBSERVATION_SHAPE
+NATURE_DQN_DTYPE = jnp.uint8
+NATURE_DQN_STACK_SIZE = dqn_agent.NATURE_DQN_STACK_SIZE
 
 @gin.configurable
 def ccreate_optimizer(name='adam', learning_rate=6.25e-5, beta1=0.9, beta2=0.999,
@@ -211,15 +215,18 @@ class JaxxDQNAgent(object):
 
   def __init__(self,
                num_actions,
+               observation_shape=NATURE_DQN_OBSERVATION_SHAPE,
+               observation_dtype=NATURE_DQN_DTYPE,
+               stack_size=NATURE_DQN_STACK_SIZE,
+               network=networks.NatureDQNNetwork,
                noisy = False,
                dueling = False,
                #observation_shape=NATURE_DQN_OBSERVATION_SHAPE,
                #observation_dtype=NATURE_DQN_DTYPE,
-               #stack_size=NATURE_DQN_STACK_SIZE,
-               observation_shape=None,
-               observation_dtype=None,
-               stack_size=None,
-               network=None,
+               #observation_shape=None,
+               #observation_dtype=None,
+               #stack_size=None,
+               #network=None,
                double_dqn=False,
                mse_inf=False,
                gamma=0.99,
@@ -293,6 +300,7 @@ class JaxxDQNAgent(object):
     logging.info('\t max_tf_checkpoints_to_keep: %d',
                  max_tf_checkpoints_to_keep)
 
+    
     self.num_actions = num_actions
     self.noisy = noisy
     self.dueling = dueling
@@ -319,7 +327,9 @@ class JaxxDQNAgent(object):
     self.allow_partial_reload = allow_partial_reload
 
     self._rng = jax.random.PRNGKey(0)
+    print('observation_shape:',observation_shape,type(observation_shape))
     state_shape = self.observation_shape + (stack_size,)
+    print('state_shape:',state_shape,type(state_shape))
     self.state = onp.zeros(state_shape)
     self._replay = self._build_replay_buffer()
     self._optimizer_name = optimizer
@@ -329,6 +339,11 @@ class JaxxDQNAgent(object):
     # environment.
     self._observation = None
     self._last_observation = None
+
+    #print('self.stack_size:',self.stack_size ,'stack_size:',stack_size )
+    #print('self.observation_shape',self.observation_shape)
+    #print('self.observation_dtype',self.observation_dtype)
+    #print('network',self.network)
 
   def _create_network(self, name):
     """Builds the convolutional network used to compute the agent's Q-values.

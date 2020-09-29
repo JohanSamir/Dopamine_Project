@@ -8,10 +8,11 @@ import dopamine.jax.networks
 import networks_new
 import dopamine.replay_memory.circular_replay_buffer
 import flax
+import minatar_env
 
-#JaxxDQNAgent.observation_shape = %gym_lib.ACROBOT_OBSERVATION_SHAPE
-#JaxxDQNAgent.observation_dtype = %jax_networks.ACROBOT_OBSERVATION_DTYPE
-#JaxxDQNAgent.stack_size = %gym_lib.ACROBOT_STACK_SIZE
+JaxxDQNAgent.observation_shape = %minatar_env.SPACE_INVADERS_SHAPE
+JaxxDQNAgent.observation_dtype = %minatar_env.DTYPE 
+JaxxDQNAgent.stack_size = 1
 JaxxDQNAgent.network = @networks_new.InvadersDDQNNetwork # [OK]
 
 JaxxDQNAgent.gamma = 0.99
@@ -20,24 +21,22 @@ JaxxDQNAgent.min_replay_history = 1000
 JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 1000
 
-JaxxDQNAgent.double_dqn = True
+JaxxDQNAgent.double_dqn = False
 JaxxDQNAgent.mse_inf = False
-JaxxDQNAgent.noisy = True
-JaxxDQNAgent.dueling = True
+JaxxDQNAgent.noisy = False
+JaxxDQNAgent.dueling = False
 
 JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
 JaxxDQNAgent.optimizer = 'adam'
-ccreate_optimizer.learning_rate = 0.001
+ccreate_optimizer.learning_rate = 0.00025 #0.001
 ccreate_optimizer.eps = 3.125e-4
 
-#create_gym_environment.environment_name = 'Acrobot'
-#create_gym_environment.version = 'v1'
-#create_agent.debug_mode = True
-TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
-Runner.num_iterations = 30
-Runner.training_steps = 1000
-#Runner.evaluation_steps = 1000
+create_gym_environment.environment_name = 'space_invaders'
+TrainRunner.create_environment_fn = @minatar_env.create_minatar_env
+Runner.num_iterations = 10
 
-Runner.max_steps_per_episode = 10000
-OutOfGraphReplayBuffer.replay_capacity = 50000
-OutOfGraphReplayBuffer.batch_size = 128
+#Runner.training_steps = 1000
+#Runner.evaluation_steps = 1000
+#Runner.max_steps_per_episode = 10000
+OutOfGraphReplayBuffer.replay_capacity = 100000
+OutOfGraphReplayBuffer.batch_size = 32
