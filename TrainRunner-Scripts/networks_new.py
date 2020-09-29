@@ -397,7 +397,9 @@ class AcrabotDDQNNetwork(nn.Module):
         print('AcrabotDDQNNetwork-Dueling[Johan]')
         adv = net(x, features=num_actions, bias=bias, kernel_init=initializer)
         val = net(x, features=1, bias=bias, kernel_init=initializer)
-        q_values = val + (adv - (jnp.mean(adv, -1, keepdims=True)))
+        #q_values = val + (adv - (jnp.mean(adv, -1, keepdims=True)))
+        q_values = val + (adv - (jnp.mean(adv, 1, keepdims=True)))
+        print('q_values.shape',q_values.shape, q_values)
 
     else:
         q_values = net(x, features=num_actions, bias=bias, kernel_init=initializer)

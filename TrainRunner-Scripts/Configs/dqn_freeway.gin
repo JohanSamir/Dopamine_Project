@@ -37,9 +37,9 @@ ccreate_optimizer.eps = 3.125e-4
 create_minatar_env.game_name  = 'freeway'
 TrainRunner.create_environment_fn = @minatar_env.create_minatar_env
 Runner.num_iterations = 10
-#Runner.training_steps = 1000
-#Runner.evaluation_steps = 1000
-#Runner.max_steps_per_episode = 10000
+
+Runner.training_steps = 1000000
+Runner.max_steps_per_episode = 100000000
 
 OutOfGraphReplayBuffer.replay_capacity = 100000
 OutOfGraphReplayBuffer.batch_size = 32
