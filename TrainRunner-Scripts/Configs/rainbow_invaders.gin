@@ -16,7 +16,7 @@ JaxxRainbowAgent.observation_shape = %minatar_env.SPACE_INVADERS_SHAPE
 JaxxRainbowAgent.observation_dtype = %minatar_env.DTYPE 
 JaxxRainbowAgent.stack_size = 1
 
-JaxxRainbowAgent.network  = @networks_new.InvadersRainbowFul
+JaxxRainbowAgent.network  = @networks_new.InvadersRainbowFull
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 100.
 JaxxRainbowAgent.gamma = 0.99
