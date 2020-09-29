@@ -58,15 +58,12 @@ class NoisyNetwork(nn.Module):
     w = w_mu + jnp.multiply(w_sigma, w_epsilon)
     ret = jnp.matmul(x, w)
 
-    if bias:
-      # b = b_mu + b_sigma*b_epsilon
-      b_mu = self.param('bias',(features,),mu_init)
-      b_sigma = self.param('biass',(features,),sigma_init)
-      b = b_mu + jnp.multiply(b_sigma, b_epsilon)
-      return ret + b
-    else:
-      return ret
-
+    b_mu = self.param('bias',(features,),mu_init)
+    b_sigma = self.param('biass',(features,),sigma_init)
+    b = b_mu + jnp.multiply(b_sigma, b_epsilon)
+    return jnp.where(bias, ret + b, ret)
+  
+  
 #---------------------------------------------< Cartpole >----------------------------------------------------------
 
 @gin.configurable
@@ -84,31 +81,22 @@ class CartpoleDDQNNetwork(nn.Module):
     x /= gym_lib.CARTPOLE_MAX_VALS - gym_lib.CARTPOLE_MIN_VALS
     x = 2.0 * x - 1.0  # Rescale in range [-1, 1].
     
-    if noisy:
-        print('CartpoleDDQNNetwork-Noisy[Johan]')
-        initializer = None
-        bias = True
-        def net(x, features, bias, kernel_init):
-            return NoisyNetwork(x, features, bias, kernel_init)
-    else:
-        initializer = nn.initializers.xavier_uniform()
-        bias = None
-        def net(x, features, bias, kernel_init):
-            return nn.Dense(x, features, kernel_init)      
+    def net(x, features):
+      return jnp.where(
+          noisy,
+          NoisyNetwork(x, features),
+          nn.Dense(x, features, kernel_init=nn.initializers.xavier_uniform()))
 
-    x = net(x, features=512, bias=bias, kernel_init=initializer)
+    x = net(x, features=512)
     x = jax.nn.relu(x)
-    x = net(x, features=512, bias=bias, kernel_init=initializer)  
+    x = net(x, features=512)
     x = jax.nn.relu(x)
 
-    if dueling:
-        print('CartpoleDDQNNNetwork-Dueling[Johan]')
-        adv = net(x, features=num_actions, bias=bias, kernel_init=initializer)
-        val = net(x, features=1, bias=bias, kernel_init=initializer)
-        q_values = val + (adv - (jnp.mean(adv, -1, keepdims=True)))
-
-    else:
-        q_values = net(x, features=num_actions, bias=bias, kernel_init=initializer)
+    adv = net(x, features=num_actions)
+    val = net(x, features=1)
+    dueling_q = val + (adv - (jnp.mean(adv, -1, keepdims=True)))
+    non_dueling_q = net(x, features=num_actions)
+    q_values = jnp.where(dueling, dueling_q, non_dueling_q)
 
     return atari_lib.DQNNetworkType(q_values)
 
