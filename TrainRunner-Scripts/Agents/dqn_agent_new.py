@@ -340,10 +340,13 @@ class JaxxDQNAgent(object):
     self._observation = None
     self._last_observation = None
 
-    #print('self.stack_size:',self.stack_size ,'stack_size:',stack_size )
-    #print('self.observation_shape',self.observation_shape)
-    #print('self.observation_dtype',self.observation_dtype)
-    #print('network',self.network)
+    print('self.stack_size:',self.stack_size ,'stack_size:',stack_size )
+    print('self.observation_shape',self.observation_shape)
+    print('self.observation_dtype',self.observation_dtype)
+    print('network',self.network)
+
+
+
 
   def _create_network(self, name):
     """Builds the convolutional network used to compute the agent's Q-values.

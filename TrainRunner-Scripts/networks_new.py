@@ -480,7 +480,8 @@ class SeaquestDDQNNetwork(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)      
@@ -518,7 +519,8 @@ class SeaquestRainbowFull(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)        
@@ -606,7 +608,8 @@ class BreakoutRainbowFull(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)        
@@ -652,7 +655,8 @@ class AsterixDDQNNetwork(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)      
@@ -690,7 +694,8 @@ class AsterixRainbowFull(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)        
@@ -736,7 +741,8 @@ class FreewayDDQNNetwork(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)      
@@ -774,7 +780,8 @@ class FreewayRainbowFull(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)        
@@ -820,7 +827,8 @@ class InvadersDDQNNetwork(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)      
@@ -858,7 +866,8 @@ class InvadersRainbowFull(nn.Module):
         def net(x, features, bias, kernel_init):
             return NoisyNetwork(x, features, bias, kernel_init)
     else:
-        initializer = nn.initializers.xavier_uniform()
+        #initializer = nn.initializers.xavier_uniform()
+        initializer = initializer_conv
         bias = None
         def net(x, features, bias, kernel_init):
             return nn.Dense(x, features, kernel_init)        

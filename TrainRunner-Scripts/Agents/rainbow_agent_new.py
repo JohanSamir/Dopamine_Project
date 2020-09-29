@@ -48,6 +48,11 @@ import jax.numpy as jnp
 import tensorflow as tf
 
 
+from dopamine.agents.dqn import dqn_agent
+from dopamine.jax import networks
+
+
+
 @functools.partial(jax.jit, static_argnums=(7, 8, 9))
 def train(target_network, optimizer, states, actions, next_states, rewards,
           terminals, support, cumulative_gamma,double_dqn):
@@ -72,7 +77,6 @@ def train(target_network, optimizer, states, actions, next_states, rewards,
     target = target_distributionDouble(optimizer.target,target_network, next_states, rewards,  terminals, support, cumulative_gamma)
   else:
     target = target_distribution(target_network, next_states, rewards,  terminals, support, cumulative_gamma)
-
 
 
   mean_loss, grad = grad_fn(optimizer.target, target)
@@ -125,12 +129,16 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
 
   def __init__(self,
                num_actions,
+               observation_shape=dqn_agent.NATURE_DQN_OBSERVATION_SHAPE,
+               observation_dtype=dqn_agent.NATURE_DQN_DTYPE,
+               stack_size=dqn_agent.NATURE_DQN_STACK_SIZE,
+               network=networks.RainbowNetwork,
                noisy = False,
                dueling = False,
-               observation_shape= None,
-               observation_dtype=None,
-               stack_size=None,
-               network=None,
+               #observation_shape= None,
+               #observation_dtype=None,
+               #stack_size=None,
+               #network=None,
                num_atoms=51,
                vmax=10.,
                gamma=0.99,
