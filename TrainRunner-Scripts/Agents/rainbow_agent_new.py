@@ -48,7 +48,6 @@ import jax.numpy as jnp
 import tensorflow as tf
 
 
-from dopamine.agents.dqn import dqn_agent
 from dopamine.jax import networks
 
 
