@@ -18,7 +18,7 @@ JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
 JaxxDQNAgent.min_replay_history = 500
 JaxxDQNAgent.update_period = 4
-JaxxDQNAgent.target_update_period = 100 #500
+JaxxDQNAgent.target_update_period = 300 #100[OK]
 
 JaxxDQNAgent.double_dqn = True
 JaxxDQNAgent.mse_inf = True #Mean Square Error Loss function
@@ -30,7 +30,7 @@ JaxxDQNAgent.dueling = False
 JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
 
 JaxxDQNAgent.optimizer = 'adam'
-ccreate_optimizer.learning_rate = 0.001 #0.0001
+ccreate_optimizer.learning_rate = 1e-3 
 ccreate_optimizer.eps = 3.125e-4
 
 create_gym_environment.environment_name = 'LunarLander'
@@ -38,9 +38,9 @@ create_gym_environment.version = 'v2'
 
 TrainRunner.create_environment_fn = @gym_lib.create_gym_environment
 Runner.num_iterations = 30
-Runner.training_steps = 1000
+Runner.training_steps = 4000
 #Runner.evaluation_steps = 1000
-Runner.max_steps_per_episode = 10000 #5000 # Default max episode length.
+Runner.max_steps_per_episode = 1000 #5000 # Default max episode length.
 
 OutOfGraphReplayBuffer.replay_capacity = 50000 #100000 
-OutOfGraphReplayBuffer.batch_size = 32 #128
+OutOfGraphReplayBuffer.batch_size = 128
