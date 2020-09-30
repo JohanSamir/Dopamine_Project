@@ -206,7 +206,7 @@ def select_action(network, state, rng, num_actions, eval_mode,
   p = jax.random.uniform(rng1)
   return rng, jnp.where(p <= epsilon,
                         jax.random.randint(rng2, (), 0, num_actions),
-                        jnp.argmax(network(state).q_values, axis=1)[0])
+                        jnp.argmax(network(state).q_values))
 
 
 @gin.configurable
