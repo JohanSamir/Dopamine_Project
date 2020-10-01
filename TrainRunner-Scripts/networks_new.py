@@ -44,7 +44,7 @@ gin.constant('jax_networks.MOUNTAINCAR_OBSERVATION_DTYPE', jnp.float64)
 @gin.configurable
 class NoisyNetwork(nn.Module):
   def apply(self, x, features, bias=True, kernel_init=None):
-    print("NoisyNetwork")
+    #print("NoisyNetwork")
     def sample_noise(shape):
       #tf.random_normal
       noise = jax.random.normal(random.PRNGKey(0),shape)
@@ -113,6 +113,7 @@ class DQNNetwork(nn.Module):
 
     for _ in range(hidden_layer):
       x = net(x, features=neurons)
+      print('x:',x)
       x = jax.nn.relu(x)
 
     adv = net(x, features=num_actions)
@@ -165,6 +166,7 @@ class RainbowDQN(nn.Module):
 
     for _ in range(hidden_layer):
       x = net(x, features=neurons)
+      #print('x:',x)
       x = jax.nn.relu(x)
 
 
