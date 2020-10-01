@@ -324,9 +324,9 @@ class JaxxDQNAgent(object):
     self.min_replay_history = min_replay_history
     self.target_update_period = target_update_period
     #self.epsilon_fn = epsilon_fn
-    self.epsilon_fn = identity_epsilon if noysi == True else epsilon_fn
+    self.epsilon_fn = identity_epsilon if noisy == True else epsilon_fn
     #self.epsilon_train = epsilon_train
-    self.epsilon_train = 0 if noysi == True else epsilon_train
+    self.epsilon_train = 0 if noisy == True else epsilon_train
     self.epsilon_eval = epsilon_eval
     self.epsilon_decay_period = epsilon_decay_period
     self.update_period = update_period
