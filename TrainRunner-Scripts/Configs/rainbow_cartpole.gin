@@ -14,10 +14,16 @@ import networks_new
 JaxxRainbowAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
 JaxxRainbowAgent.observation_dtype = %jax_networks.CARTPOLE_OBSERVATION_DTYPE
 JaxxRainbowAgent.stack_size = %gym_lib.CARTPOLE_STACK_SIZE
-JaxxRainbowAgent.network  = @networks_new.CartpoleRainbowFull 
+JaxxRainbowAgent.network  = @networks_new.RainbowDQN 
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 200. #->Original 10
 JaxxRainbowAgent.gamma = 0.99
+
+JaxxRainbowAgent.minatar = False
+JaxxRainbowAgent.env = "CartPole"
+JaxxRainbowAgent.normalize_obs = True
+JaxxRainbowAgent.hidden_layer = 2
+JaxxRainbowAgent.neurons = 512
 
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True

@@ -20,6 +20,12 @@ JaxxDQNAgent.min_replay_history = 500
 JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 300 #100[OK]
 
+JaxxDQNAgent.minatar = False
+JaxxDQNAgent.env = None
+JaxxDQNAgent.normalize_obs = False
+JaxxDQNAgent.hidden_layer = 2
+JaxxDQNAgent.neurons = 512
+
 JaxxDQNAgent.double_dqn = True
 JaxxDQNAgent.mse_inf = True #Mean Square Error Loss function
 JaxxDQNAgent.noisy = False

@@ -16,7 +16,7 @@ JaxxRainbowAgent.observation_shape = %minatar_env.SPACE_INVADERS_SHAPE
 JaxxRainbowAgent.observation_dtype = %minatar_env.DTYPE 
 JaxxRainbowAgent.stack_size = 1
 
-JaxxRainbowAgent.network  = @networks_new.InvadersRainbowFull
+JaxxRainbowAgent.network  = @networks_new.RainbowDQN
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 100.
 JaxxRainbowAgent.gamma = 0.99
@@ -24,6 +24,12 @@ JaxxRainbowAgent.gamma = 0.99
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True
 JaxxRainbowAgent.dueling = True
+
+JaxxRainbowAgent.minatar = True
+JaxxRainbowAgent.env = None
+JaxxRainbowAgent.normalize_obs = False
+JaxxRainbowAgent.hidden_layer = 0
+JaxxRainbowAgent.neurons = None
 
 JaxxRainbowAgent.update_horizon = 3 # Rainbow
 JaxxRainbowAgent.min_replay_history = 1000

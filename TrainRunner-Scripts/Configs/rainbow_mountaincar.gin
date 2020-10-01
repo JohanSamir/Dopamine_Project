@@ -14,10 +14,17 @@ import networks_new
 JaxxRainbowAgent.observation_shape = (2,1)
 JaxxRainbowAgent.observation_dtype = %jax_networks.MOUNTAINCAR_OBSERVATION_DTYPE
 JaxxRainbowAgent.stack_size = 1
-JaxxRainbowAgent.network  = @networks_new.MountainCarRainbowFull
+JaxxRainbowAgent.network  = @networks_new.RainbowDQN
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 100. #->Original 10
 JaxxRainbowAgent.gamma = 0.99
+
+JaxxRainbowAgent.minatar = False
+JaxxRainbowAgent.env = "MountainCar"
+JaxxRainbowAgent.normalize_obs = True
+JaxxRainbowAgent.hidden_layer = 2
+JaxxRainbowAgent.neurons = 512
+
 
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True

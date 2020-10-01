@@ -12,13 +12,20 @@ import minatar_env
 JaxxDQNAgent.observation_shape = %minatar_env.BREAKOUT_SHAPE
 JaxxDQNAgent.observation_dtype = %minatar_env.DTYPE 
 JaxxDQNAgent.stack_size = 1 # Setting it as 4 does not work well.
-JaxxDQNAgent.network = @networks_new.BreakoutDDQNNetwork
+JaxxDQNAgent.network = @networks_new.DQNNetwork
 
 JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
 JaxxDQNAgent.min_replay_history = 1000
 JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 1000
+
+JaxxDQNAgent.minatar = True
+JaxxDQNAgent.env = None
+JaxxDQNAgent.normalize_obs = False
+JaxxDQNAgent.hidden_layer = 0
+JaxxDQNAgent.neurons = None
+
 
 JaxxDQNAgent.double_dqn = False
 JaxxDQNAgent.mse_inf = False #Mean Square Error Loss function

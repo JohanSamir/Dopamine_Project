@@ -12,7 +12,7 @@ JaxxDQNAgent.observation_shape = %gym_lib.CARTPOLE_OBSERVATION_SHAPE
 JaxxDQNAgent.observation_dtype = %jax_networks.CARTPOLE_OBSERVATION_DTYPE
 JaxxDQNAgent.stack_size = %gym_lib.CARTPOLE_STACK_SIZE
 
-JaxxDQNAgent.network = @networks_new.CartpoleDDQNNetwork
+JaxxDQNAgent.network = @networks_new.DQNNetwork
 
 JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
@@ -20,10 +20,16 @@ JaxxDQNAgent.min_replay_history = 500
 JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 100
 
+JaxxDQNAgent.minatar = False
+JaxxDQNAgent.env = "CartPole"
+JaxxDQNAgent.normalize_obs = True
+JaxxDQNAgent.hidden_layer = 2
+JaxxDQNAgent.neurons = 512
+
 JaxxDQNAgent.double_dqn = True
 JaxxDQNAgent.mse_inf = False #Mean Square Error Loss function
 JaxxDQNAgent.noisy = True
-JaxxDQNAgent.dueling = True
+JaxxDQNAgent.dueling = False
 
 #JaxxDQNAgent.summary_writer = None
 

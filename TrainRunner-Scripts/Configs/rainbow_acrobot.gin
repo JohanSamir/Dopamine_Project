@@ -14,15 +14,20 @@ import networks_new
 JaxxRainbowAgent.observation_shape = %gym_lib.ACROBOT_OBSERVATION_SHAPE
 JaxxRainbowAgent.observation_dtype = %jax_networks.ACROBOT_OBSERVATION_DTYPE
 JaxxRainbowAgent.stack_size = %gym_lib.ACROBOT_STACK_SIZE
-JaxxRainbowAgent.network  = @networks_new.AcrabotRainbowFull
+JaxxRainbowAgent.network  = @networks_new.RainbowDQN
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 200. #->Original 10
 JaxxRainbowAgent.gamma = 0.99
 
+JaxxRainbowAgent.minatar = False
+JaxxRainbowAgent.env = "Acrobot"
+JaxxRainbowAgent.normalize_obs = True
+JaxxRainbowAgent.hidden_layer = 2
+JaxxRainbowAgent.neurons = 512
+
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True
 JaxxRainbowAgent.dueling = True
-
 
 JaxxRainbowAgent.update_horizon = 3 # Rainbow
 JaxxRainbowAgent.min_replay_history = 500

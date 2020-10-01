@@ -15,10 +15,16 @@ import minatar_env
 JaxxRainbowAgent.observation_shape = %minatar_env.ASTERIX_SHAPE
 JaxxRainbowAgent.observation_dtype = %minatar_env.DTYPE
 JaxxRainbowAgent.stack_size = 1
-JaxxRainbowAgent.network  = @networks_new.AsterixRainbowFull
+JaxxRainbowAgent.network  = @networks_new.RainbowDQN
 JaxxRainbowAgent.num_atoms = 51 # Original 51 (161)
 JaxxRainbowAgent.vmax = 100. #->Original 200
 JaxxRainbowAgent.gamma = 0.99
+
+JaxxRainbowAgent.minatar = True
+JaxxRainbowAgent.env = None
+JaxxRainbowAgent.normalize_obs = False
+JaxxRainbowAgent.hidden_layer = 0
+JaxxRainbowAgent.neurons = None
 
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True

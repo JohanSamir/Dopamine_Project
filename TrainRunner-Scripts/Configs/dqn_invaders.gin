@@ -13,7 +13,13 @@ import minatar_env
 JaxxDQNAgent.observation_shape = %minatar_env.SPACE_INVADERS_SHAPE
 JaxxDQNAgent.observation_dtype = %minatar_env.DTYPE 
 JaxxDQNAgent.stack_size = 1
-JaxxDQNAgent.network = @networks_new.InvadersDDQNNetwork # [OK]
+JaxxDQNAgent.network = @networks_new.DQNNetwork # [OK]
+
+JaxxDQNAgent.minatar = True
+JaxxDQNAgent.env = None
+JaxxDQNAgent.normalize_obs = False
+JaxxDQNAgent.hidden_layer = 0
+JaxxDQNAgent.neurons = None
 
 JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
