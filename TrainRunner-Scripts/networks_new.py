@@ -24,6 +24,8 @@ import numpy as onp
 from jax import random
 import math
 
+from jax.tree_util import tree_flatten, tree_map
+
 #---------------------------------------------------------------------------------------------------------------------
 
 
@@ -74,7 +76,6 @@ class NoisyNetwork(nn.Module):
     b = b_mu + jnp.multiply(b_sigma, b_epsilon)
     return jnp.where(bias, ret + b, ret)
   
-  
 #---------------------------------------------< DQNNetwork >----------------------------------------------------------
 
 @gin.configurable
@@ -83,28 +84,7 @@ class DQNNetwork(nn.Module):
 
   def apply(self, x, num_actions, minatar, env, normalize_obs, noisy, dueling, hidden_layer=2, neurons=512):
     del normalize_obs
-    # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
-    # have removed the true batch dimension.
-    #print('minatar', minatar, type(minatar))
 
-    #print('x_init_antes:',x, x.shape)
-    
-    #print('x_init',x.shape)
-    
-    #def environ(minatar,x):
-    #  return jnp.where(minatar, minatar_ev(x), gym_env(x))
-
-    #def gym_env(x):
-    #  return x.reshape((x.shape[0], -1))
-
-    #def tar_ev(x):
-    #  x = x.squeeze(3)
-    #  x = conv(x)
-    #  nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=nn.initializers.xavier_uniform())
-    #  x = jax.nn.relu(x)
-    #  return  x.reshape((x.shape[0], -1))
-      #return 1 
-   
     if minatar:
       #print('minatar')
       x = x.squeeze(3)
@@ -188,29 +168,21 @@ class RainbowDQN(nn.Module):
       x = jax.nn.relu(x)
 
 
-    adv = net(x,features=num_actions * num_atoms)
-    value = net(x, features=num_atoms)
-    adv = adv.reshape((adv.shape[0], num_actions, num_atoms))
-    value = value.reshape((value.shape[0], 1, num_atoms))
-    logits = value + (adv - (jnp.mean(adv, -1, keepdims=True)))
-    probabilities = nn.softmax(logits)
-    dueling_q = jnp.sum(support * probabilities, axis=2)
-    dueling_inf = {"q_values ":dueling_q,
-                   "logits":logits,
-                   "probabilities":probabilities}
+    if dueling:
+      #print('dueling')
+      adv = net(x,features=num_actions * num_atoms)
+      value = net(x, features=num_atoms)
+      adv = adv.reshape((adv.shape[0], num_actions, num_atoms))
+      value = value.reshape((value.shape[0], 1, num_atoms))
+      logits = value + (adv - (jnp.mean(adv, -1, keepdims=True)))
+      probabilities = nn.softmax(logits)
+      q_values = jnp.sum(support * probabilities, axis=2)
 
+    else:
+      #print('No dueling')
+      x = net(x, features=num_actions * num_atoms)
+      logits = x.reshape((x.shape[0], num_actions, num_atoms))
+      probabilities = nn.softmax(logits)
+      q_values = jnp.sum(support * probabilities, axis=2)
 
-    x = net(x, features=num_actions * num_atoms)
-    logits = x.reshape((x.shape[0], num_actions, num_atoms))
-    probabilities = nn.softmax(logits)
-    non_dueling_q = jnp.sum(support * probabilities, axis=2)
-    non_dueling_inf = {"q_values ":non_dueling_q,
-                       "logits":logits,
-                       "probabilities":probabilities}
-   
-    inf = jnp.where(dueling, dueling_inf, non_dueling_inf)
-    
-    return atari_lib.RainbowNetworkType(inf["q_values"], inf["logits"], inf["probabilities"])
-
-
-
+    return atari_lib.RainbowNetworkType(q_values, logits, probabilities)

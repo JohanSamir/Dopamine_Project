@@ -33,7 +33,7 @@ JaxxDQNAgent.noisy = False
 JaxxDQNAgent.dueling = False
 
 
-JaxxDQNAgent.epsilon_fn = @dqn_agent_new.linearly_decaying_epsilon
+JaxxDQNAgent.epsilon_fn = @dqn_agent.linearly_decaying_epsilon
 #JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
 JaxxDQNAgent.optimizer = 'adam'
 ccreate_optimizer.learning_rate = 0.00025 #0.001

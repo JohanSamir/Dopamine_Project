@@ -5,6 +5,7 @@
 # Hyperparameters for a simple Rainbow-style Cartpole agent. The
 # hyperparameters chosen achieve reasonable performance.
 import dopamine.jax.agents.rainbow.rainbow_agent
+import dopamine.jax.agents.dqn.dqn_agent
 import dopamine.jax.networks
 import dopamine.discrete_domains.gym_lib
 import dopamine.discrete_domains.run_experiment
@@ -27,7 +28,7 @@ JaxxRainbowAgent.neurons = 512
 
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True
-JaxxRainbowAgent.dueling = True
+JaxxRainbowAgent.dueling = False
 
 JaxxRainbowAgent.update_horizon = 3 # Rainbow
 JaxxRainbowAgent.min_replay_history = 500
