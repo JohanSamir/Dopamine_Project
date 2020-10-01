@@ -34,7 +34,7 @@ JaxxRainbowAgent.update_horizon = 3 # Rainbow
 JaxxRainbowAgent.min_replay_history = 1000
 JaxxRainbowAgent.update_period = 4 #-> 4 # EStaba en 2
 JaxxRainbowAgent.target_update_period = 1000
-JaxxRainbowAgent.epsilon_fn = @dqn_agent.linearly_decaying_epsilon #@dqn_agent.identity_epsilon
+JaxxRainbowAgent.epsilon_fn = @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
 
 #JaxxRainbowAgent.replay_scheme = 'uniform' #C51
 JaxxRainbowAgent.replay_scheme = 'prioritized' #--> Original
