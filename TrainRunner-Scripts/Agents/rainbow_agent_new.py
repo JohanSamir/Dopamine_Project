@@ -135,10 +135,13 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
                network=networks.RainbowNetwork,
                noisy = False,
                dueling = False,
-               #observation_shape= None,
-               #observation_dtype=None,
-               #stack_size=None,
-               #network=None,
+
+               minatar = True,
+               env = "CartPole", 
+               normalize_obs = True,
+               hidden_layer=2, 
+               neurons=512,
+
                num_atoms=51,
                vmax=10.,
                gamma=0.99,
@@ -199,6 +202,11 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
     self._support = jnp.linspace(-vmax, vmax, num_atoms)
     self._replay_scheme = replay_scheme
     self._double_dqn = double_dqn
+    self._minatar = minatar
+    self._env = env 
+    self._normalize_obs = normalize_obs
+    self._hidden_layer= hidden_layer
+    self._neurons=neurons 
     self._noisy = noisy
     self._dueling = dueling
 
@@ -208,7 +216,12 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
         observation_dtype=observation_dtype,
         stack_size=stack_size,
         network=network.partial(num_atoms=num_atoms,
-                                support=self._support, 
+                                support=self._support,
+                                minatar=self._minatar,
+                                env=self._env,
+                                normalize_obs=self._normalize_obs,
+                                hidden_layer=self._hidden_layer, 
+                                neurons=self._neurons,
                                 noisy=self._noisy,
                                 dueling=self._dueling),
         gamma=gamma,

@@ -219,14 +219,15 @@ class JaxxDQNAgent(object):
                observation_dtype=NATURE_DQN_DTYPE,
                stack_size=NATURE_DQN_STACK_SIZE,
                network=networks.NatureDQNNetwork,
+
+               minatar = True,
+               env = "CartPole", 
+               normalize_obs = True,
+               hidden_layer=2, 
+               neurons=512, 
+
                noisy = False,
                dueling = False,
-               #observation_shape=NATURE_DQN_OBSERVATION_SHAPE,
-               #observation_dtype=NATURE_DQN_DTYPE,
-               #observation_shape=None,
-               #observation_dtype=None,
-               #stack_size=None,
-               #network=None,
                double_dqn=False,
                mse_inf=False,
                gamma=0.99,
@@ -302,12 +303,18 @@ class JaxxDQNAgent(object):
 
     
     self.num_actions = num_actions
+    self.minatar = minatar
+    self.env = env 
+    self.normalize_obs = normalize_obs
+    self.hidden_layer= hidden_layer
+    self.neurons=neurons 
     self.noisy = noisy
     self.dueling = dueling
     self.observation_shape = tuple(observation_shape)
     self.observation_dtype = observation_dtype
     self.stack_size = stack_size
-    self.network = network.partial(num_actions=num_actions,noisy=noisy,dueling=dueling)
+    self.network = network.partial(num_actions=num_actions, minatar = minatar, env = env,normalize_obs = normalize_obs,
+                                  hidden_layer= hidden_layer, neurons=neurons, noisy=noisy,dueling=dueling)
     self.double_dqn = double_dqn
     self.mse_inf = mse_inf
     self.gamma = gamma
@@ -344,8 +351,6 @@ class JaxxDQNAgent(object):
     print('self.observation_shape',self.observation_shape)
     print('self.observation_dtype',self.observation_dtype)
     print('network',self.network)
-
-
 
 
   def _create_network(self, name):
