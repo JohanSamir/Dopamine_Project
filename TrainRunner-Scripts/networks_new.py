@@ -82,6 +82,7 @@ class DQNNetwork(nn.Module):
   """Jax DQN network for Cartpole."""
 
   def apply(self, x, num_actions, minatar, env, normalize_obs, noisy, dueling, hidden_layer=2, neurons=512):
+    del normalize_obs
     # We need to add a "batch dimension" as nn.Conv expects it, yet vmap will
     # have removed the true batch dimension.
     #print('minatar', minatar, type(minatar))
@@ -111,44 +112,28 @@ class DQNNetwork(nn.Module):
       x = x.astype(jnp.float32)
       x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=nn.initializers.xavier_uniform())
       x = jax.nn.relu(x)
-      xm = x.reshape((x.shape[0], -1))
+      x = x.reshape((x.shape[0], -1))
 
     else:
-      #print('gym')
       x = x[None, ...]
       x = x.astype(jnp.float32)
-      xm = x.reshape((x.shape[0], -1))
+      x = x.reshape((x.shape[0], -1))
 
-    #xm = jnp.where(minatar, tar_ev(x), gym_env(x))
-    #print('xm', xm)
-    #print('xm:',xm)
-    xn = xm - env_inf[env]['MIN_VALS']
-    xn /= env_inf[env]['MAX_VALS'] - env_inf[env]['MIN_VALS']
-    xn = 2.0 * xn - 1.0
-    #print('xn:',xn)
-    x = jnp.where(normalize_obs, xn, xm)
-    #print('x:',x)
-
-    #def net(x, features):
-    #  return jnp.where(
-    #    noisy,
-    #    NoisyNetwork(x, features),
-    #    nn.Dense(x, features, kernel_init=nn.initializers.xavier_uniform()))
+    if env is not None:
+      x = x - env_inf[env]['MIN_VALS']
+      x /= env_inf[env]['MAX_VALS'] - env_inf[env]['MIN_VALS']
+      x = 2.0 * x - 1.0
 
     if noisy:
-      #print('noisy')
       def net(x, features):
         return NoisyNetwork(x, features)
     else:
-      #print('dense')
       def net(x, features):
         return nn.Dense(x, features, kernel_init=nn.initializers.xavier_uniform())
 
     for _ in range(hidden_layer):
       x = net(x, features=neurons)
       x = jax.nn.relu(x)
-    #x = net(x, features=neurons)
-    #x = jax.nn.relu(x)
 
     adv = net(x, features=num_actions)
     val = net(x, features=1)
@@ -168,6 +153,7 @@ class DQNNetwork(nn.Module):
 class RainbowDQN(nn.Module):
 
   def apply(self, x, num_actions, minatar, env, normalize_obs, noisy, dueling, num_atoms, support, hidden_layer=2, neurons=512):
+    del normalize_obs
 
     if minatar:
       x = x.squeeze(3)
@@ -175,18 +161,18 @@ class RainbowDQN(nn.Module):
       x = x.astype(jnp.float32)
       x = nn.Conv(x, features=16, kernel_size=(3, 3, 3), strides=(1, 1, 1),  kernel_init=nn.initializers.xavier_uniform())
       x = jax.nn.relu(x)
-      xm = x.reshape((x.shape[0], -1))
+      x = x.reshape((x.shape[0], -1))
 
     else:
       x = x[None, ...]
       x = x.astype(jnp.float32)
-      xm = x.reshape((x.shape[0], -1))
+      x = x.reshape((x.shape[0], -1))
 
 
-    xn = xm - env_inf[env]['MIN_VALS']
-    xn /= env_inf[env]['MAX_VALS'] - env_inf[env]['MIN_VALS']
-    xn = 2.0 * xn - 1.0
-    x = jnp.where(normalize_obs, xn, xm)
+    if env is not None:
+      x = x - env_inf[env]['MIN_VALS']
+      x /= env_inf[env]['MAX_VALS'] - env_inf[env]['MIN_VALS']
+      x = 2.0 * x - 1.0
 
 
     if noisy:
