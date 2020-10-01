@@ -225,7 +225,7 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
         update_period=update_period,
         target_update_period=target_update_period,
         #epsilon_fn=epsilon_fn,
-        epsilon_fn = dqn_agent.identity_epsilon if noysi == True else epsilon_fn,
+        epsilon_fn = dqn_agent.identity_epsilon if noisy == True else epsilon_fn,
         #epsilon_train=epsilon_train,
         epsilon_train = 0 if self._noisy == True else epsilon_train,
         epsilon_eval=epsilon_eval,
