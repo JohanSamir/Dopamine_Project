@@ -32,8 +32,8 @@ JaxxDQNAgent.noisy = False
 JaxxDQNAgent.dueling = False
 #JaxxDQNAgent.summary_writer = None
 
-#JaxxDQNAgent.epsilon_fn = @dqn_agent_new.linearly_decaying_epsilon #@functools.partial(jax.jit) it's not @gin.configurable
-JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
+JaxxDQNAgent.epsilon_fn = @dqn_agent_new.linearly_decaying_epsilon
+#JaxxDQNAgent.epsilon_fn = @dqn_agent.identity_epsilon
 
 JaxxDQNAgent.optimizer = 'adam'
 ccreate_optimizer.learning_rate = 0.00025 #0.0001
