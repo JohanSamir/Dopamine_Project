@@ -12,7 +12,7 @@ JaxxDQNAgent.observation_shape = (2,1)
 JaxxDQNAgent.observation_dtype = %jax_networks.MOUNTAINCAR_OBSERVATION_DTYPE
 JaxxDQNAgent.stack_size = 1
 
-JaxxDQNAgent.network = @networks_new.MountainCarDDQNNetwork
+JaxxDQNAgent.network = @networks_new.DQNNetwork
 
 JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
