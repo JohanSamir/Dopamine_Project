@@ -20,6 +20,7 @@ class MinAtarEnv(object):
   def __init__(self, game_name):
     self.env = minatar.Environment(env_name=game_name)
     self.env.n = self.env.num_actions()
+    self.game_over = False
 
   @property
   def observation_space(self):
@@ -37,16 +38,14 @@ class MinAtarEnv(object):
   def metadata(self):
     pass  # Unused
 
-  @property
-  def game_over(self):
-    return False  # Not defined in MinAtar
-
   def reset(self):
+    self.game_over = False
     self.env.reset()
     return self.env.state()
 
   def step(self, action):
     r, terminal = self.env.act(action)
+    self.game_over = terminal
     return self.env.state(), r, terminal, None
 
 
