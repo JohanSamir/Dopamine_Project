@@ -16,6 +16,7 @@ JaxxDQNAgent.network = @networks_new.DQNNetwork
 
 JaxxDQNAgent.gamma = 0.99
 JaxxDQNAgent.update_horizon = 1
+JaxxDQNAgent.prioritized = False
 JaxxDQNAgent.min_replay_history = 1000
 JaxxDQNAgent.update_period = 4
 JaxxDQNAgent.target_update_period = 1000

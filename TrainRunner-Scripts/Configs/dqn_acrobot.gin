@@ -15,6 +15,7 @@ JaxxDQNAgent.stack_size = %gym_lib.ACROBOT_STACK_SIZE
 JaxxDQNAgent.network = @networks_new.DQNNetwork # [OK]
 
 JaxxDQNAgent.gamma = 0.99
+JaxxDQNAgent.prioritized = False
 JaxxDQNAgent.update_horizon = 1
 JaxxDQNAgent.min_replay_history = 500
 JaxxDQNAgent.update_period = 4
