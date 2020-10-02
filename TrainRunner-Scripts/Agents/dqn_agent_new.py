@@ -24,7 +24,7 @@ import math
 
 from absl import logging
 #from dopamine.jax import networks
-from dopamine.replay_memory import circular_replay_buffer
+from dopamine.replay_memory import circular_replay_buffer, prioritized_replay_buffer
 from flax import nn
 from flax import optim
 import gin
@@ -225,7 +225,8 @@ class JaxxDQNAgent(object):
                env = "CartPole", 
                normalize_obs = True,
                hidden_layer=2, 
-               neurons=512, 
+               neurons=512,
+               prioritized=False,
 
                noisy = False,
                dueling = False,
@@ -341,7 +342,9 @@ class JaxxDQNAgent(object):
     state_shape = self.observation_shape + (stack_size,)
     print('state_shape:',state_shape,type(state_shape))
     self.state = onp.zeros(state_shape)
-    self._replay = self._build_replay_buffer()
+    #self._replay = self._build_replay_buffer()
+    self.prioritized=prioritized
+    self._replay = self._build_replay_buffer_prioritized() if prioritized == True else self._build_replay_buffer()
     self._optimizer_name = optimizer
     self._build_networks_and_optimizer()
 
@@ -350,10 +353,10 @@ class JaxxDQNAgent(object):
     self._observation = None
     self._last_observation = None
 
-    print('self.stack_size:',self.stack_size ,'stack_size:',stack_size )
-    print('self.observation_shape',self.observation_shape)
-    print('self.observation_dtype',self.observation_dtype)
-    print('network',self.network)
+    #print('self.stack_size:',self.stack_size ,'stack_size:',stack_size )
+    #print('self.observation_shape',self.observation_shape)
+    #print('self.observation_dtype',self.observation_dtype)
+    #print('network',self.network)
 
 
   def _create_network(self, name):
@@ -383,6 +386,7 @@ class JaxxDQNAgent(object):
     return self.optimizer.target
 
   def _build_replay_buffer(self):
+    print('replay')
     """Creates the replay buffer used by the agent."""
     return circular_replay_buffer.OutOfGraphReplayBuffer(
         observation_shape=self.observation_shape,
@@ -390,6 +394,17 @@ class JaxxDQNAgent(object):
         update_horizon=self.update_horizon,
         gamma=self.gamma,
         observation_dtype=self.observation_dtype)
+
+  def _build_replay_buffer_prioritized(self):
+    print('prioritized')
+    """Creates the prioritized replay buffer used by the agent."""
+    return prioritized_replay_buffer.OutOfGraphPrioritizedReplayBuffer(
+        observation_shape=self.observation_shape,
+        stack_size=self.stack_size,
+        update_horizon=self.update_horizon,
+        gamma=self.gamma,
+        observation_dtype=self.observation_dtype)  
+
 
   def _sample_from_replay_buffer(self):
     samples = self._replay.sample_transition_batch()
@@ -513,6 +528,7 @@ class JaxxDQNAgent(object):
     if self._replay.add_count > self.min_replay_history:
       if self.training_steps % self.update_period == 0:
         self._sample_from_replay_buffer()
+
         self.optimizer, loss = train(self.target_network,
                                      self.optimizer,
                                      self.replay_elements['state'],
@@ -546,7 +562,11 @@ class JaxxDQNAgent(object):
       reward: float, the reward.
       is_terminal: bool, indicating if the current state is a terminal state.
     """
-    self._replay.add(last_observation, action, reward, is_terminal)
+    if self.prioritized==True:
+    	priority = self._replay.sum_tree.max_recorded_priority
+    	self._replay.add(last_observation, action, reward, is_terminal, priority)
+    else:
+    	self._replay.add(last_observation, action, reward, is_terminal)
 
   def bundle_and_checkpoint(self, checkpoint_dir, iteration_number):
     """Returns a self-contained bundle of the agent's state.
