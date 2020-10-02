@@ -28,7 +28,7 @@ JaxxRainbowAgent.neurons = 512
 
 JaxxRainbowAgent.double_dqn = True
 JaxxRainbowAgent.noisy = True
-JaxxRainbowAgent.dueling = False
+JaxxRainbowAgent.dueling = True
 
 JaxxRainbowAgent.update_horizon = 3 # Rainbow
 JaxxRainbowAgent.min_replay_history = 500

@@ -26,9 +26,9 @@ JaxxDQNAgent.normalize_obs = True
 JaxxDQNAgent.hidden_layer = 2
 JaxxDQNAgent.neurons = 512
 
-JaxxDQNAgent.double_dqn = True
+JaxxDQNAgent.double_dqn = False
 JaxxDQNAgent.mse_inf = False #Mean Square Error Loss function
-JaxxDQNAgent.noisy = True
+JaxxDQNAgent.noisy = False
 JaxxDQNAgent.dueling = False
 
 #JaxxDQNAgent.summary_writer = None
