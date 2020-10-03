@@ -5,6 +5,7 @@ import dqn_agent_new
 import dopamine.jax.networks
 import networks_new
 import dopamine.replay_memory.circular_replay_buffer
+import dopamine.replay_memory.prioritized_replay_buffer
 import flax
 
 
