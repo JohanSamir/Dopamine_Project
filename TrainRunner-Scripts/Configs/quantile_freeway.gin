@@ -32,7 +32,7 @@ JaxxQuantileAgent.neurons = None
 
 JaxxQuantileAgent.double_dqn = True
 JaxxQuantileAgent.noisy = True
-JaxxQuantileAgent.dueling = True
+JaxxQuantileAgent.dueling = False
 
 JaxxQuantileAgent.replay_scheme = 'prioritized'
 create_optimizer.learning_rate = 0.0001

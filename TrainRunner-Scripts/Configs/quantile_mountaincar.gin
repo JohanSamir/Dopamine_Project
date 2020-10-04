@@ -35,7 +35,7 @@ JaxxQuantileAgent.neurons = 512
 
 JaxxQuantileAgent.double_dqn = True
 JaxxQuantileAgent.noisy = True
-JaxxQuantileAgent.dueling = True
+JaxxQuantileAgent.dueling = False
 
 JaxxQuantileAgent.replay_scheme = 'prioritized'
 JaxxQuantileAgent.optimizer = 'adam'
