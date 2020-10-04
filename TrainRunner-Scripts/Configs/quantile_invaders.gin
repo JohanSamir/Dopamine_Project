@@ -1,0 +1,50 @@
+# Hyperparameters follow Dabney et al. (2017) but we modify as necessary to
+# match those used in Rainbow (Hessel et al., 2018), to ensure apples-to-apples
+# comparison.
+
+import dopamine.jax.agents.rainbow.rainbow_agent
+import dopamine.jax.agents.dqn.dqn_agent
+import dopamine.discrete_domains.gym_lib
+import dopamine.discrete_domains.run_experiment
+import dopamine.replay_memory.prioritized_replay_buffer
+import networks_new
+import minatar_env
+#import dopamine.jax.agents.quantile.quantile_agent
+
+
+JaxxQuantileAgent.observation_shape = %minatar_env.SPACE_INVADERS_SHAPE
+JaxxQuantileAgent.observation_dtype = %minatar_env.DTYPE
+JaxxQuantileAgent.stack_size = 1
+JaxxQuantileAgent.network  = @networks_new.QuantileNetwork 
+
+JaxxQuantileAgent.kappa = 1.0
+JaxxQuantileAgent.num_atoms = 51
+JaxxQuantileAgent.gamma = 0.99
+JaxxQuantileAgent.update_horizon = 3
+JaxxQuantileAgent.min_replay_history = 1000 # agent steps
+JaxxQuantileAgent.update_period = 4
+JaxxQuantileAgent.target_update_period = 1000 # agent steps
+
+JaxxQuantileAgent.minatar = True
+JaxxQuantileAgent.env = None
+JaxxQuantileAgent.normalize_obs = False
+JaxxQuantileAgent.hidden_layer = 0
+JaxxQuantileAgent.neurons = None
+
+JaxxQuantileAgent.double_dqn = True
+JaxxQuantileAgent.noisy = True
+JaxxQuantileAgent.dueling = True
+
+JaxxQuantileAgent.replay_scheme = 'prioritized'
+create_optimizer.learning_rate = 0.0001
+create_optimizer.eps = 0.0003125
+
+create_minatar_env.game_name  ='space_invaders'
+JaxxQuantileAgent.epsilon_fn = @jax.agents.dqn.dqn_agent.linearly_decaying_epsilon
+TrainRunner.create_environment_fn = @minatar_env.create_minatar_env
+Runner.num_iterations = 10
+Runner.training_steps = 1000000
+Runner.max_steps_per_episode = 100000000
+
+OutOfGraphPrioritizedReplayBuffer.replay_capacity = 100000
+OutOfGraphPrioritizedReplayBuffer.batch_size = 32
