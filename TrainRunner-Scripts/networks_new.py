@@ -232,7 +232,7 @@ class QuantileNetwork(nn.Module):
       x = jax.nn.relu(x)
 
     if dueling:
-      #print('dueling')
+      print('dueling')
       adv = net(x,features=num_actions * num_atoms)
       value = net(x, features=num_atoms)
       adv = adv.reshape((adv.shape[0], num_actions, num_atoms))
