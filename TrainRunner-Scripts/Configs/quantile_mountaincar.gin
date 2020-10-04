@@ -33,8 +33,8 @@ JaxxQuantileAgent.normalize_obs = True
 JaxxQuantileAgent.hidden_layer = 2
 JaxxQuantileAgent.neurons = 512
 
-JaxxQuantileAgent.double_dqn = True
-JaxxQuantileAgent.noisy = True
+JaxxQuantileAgent.double_dqn = False
+JaxxQuantileAgent.noisy = False
 JaxxQuantileAgent.dueling = False
 
 JaxxQuantileAgent.replay_scheme = 'prioritized'
