@@ -119,7 +119,7 @@ def target_distribution(target_network, next_states, rewards, terminals,
 
 
 @gin.configurable
-class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
+class JaxRainbowAgentNew(dqn_agent.JaxDQNAgent):
   """A compact implementation of a simplified Rainbow agent."""
 
   def __init__(self,
@@ -205,7 +205,7 @@ class JaxxRainbowAgent(dqn_agent.JaxDQNAgent):
     self._noisy = noisy
     self._dueling = dueling
 
-    super(JaxxRainbowAgent, self).__init__(
+    super(JaxRainbowAgentNew, self).__init__(
         num_actions=num_actions,
         observation_shape=observation_shape,
         observation_dtype=observation_dtype,
